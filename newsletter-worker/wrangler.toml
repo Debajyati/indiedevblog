@@ -1,0 +1,13 @@
+name = "hugo-newsletter-worker"
+main = "src/index.js"
+compatibility_date = "2024-03-01"
+
+[vars]
+BLOG_DOMAIN = "https://indiedevblog.pages.dev"
+SENDER_EMAIL = "newsletter@mail.debajyati.com"
+SENDER_NAME = "Indie Dev Blog"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hugo-newsletter-db"
+database_id = "162f3c18-b7cc-4b8b-9d59-cc1d15872779"

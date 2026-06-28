@@ -1,0 +1,167 @@
+<div class="newsletter-card">
+  <div class="newsletter-header">
+    <h3>Join the Newsletter!</h3>
+    <p>Get latest updates about new articles and projects direct to your inbox.</p>
+  </div>
+  <form id="newsletter-form" class="newsletter-form">
+    <div class="input-group">
+      <input type="text" id="news-name" name="name" placeholder="Your Name" required />
+    </div>
+    <div class="input-group">
+      <input type="email" id="news-email" name="email" placeholder="your@email.com" required />
+    </div>
+    <button type="submit" id="news-submit-btn">
+      <span>Subscribe</span>
+      <div class="btn-spinner hidden"></div>
+    </button>
+  </form>
+  <div id="newsletter-message" class="newsletter-message hidden"></div>
+</div>
+
+<style>
+  .newsletter-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    margin: 40px auto;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .newsletter-header h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .newsletter-header p {
+    margin: 0 0 24px 0;
+    color: #9ca3af;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  .input-group input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+  #news-submit-btn {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  #news-submit-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+  }
+  #news-submit-btn:active {
+    transform: translateY(0);
+  }
+  .newsletter-message {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+  }
+  .newsletter-message.success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+  }
+  .newsletter-message.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+  }
+  .hidden { display: none !important; }
+  .btn-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+  document.getElementById("newsletter-form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const name = document.getElementById("news-name").value;
+    const email = document.getElementById("news-email").value;
+    const submitBtn = document.getElementById("news-submit-btn");
+    const btnText = submitBtn.querySelector("span");
+    const spinner = submitBtn.querySelector(".btn-spinner");
+    const msgBox = document.getElementById("newsletter-message");
+
+    // Show loading state
+    btnText.classList.add("hidden");
+    spinner.classList.remove("hidden");
+    submitBtn.disabled = true;
+    msgBox.classList.add("hidden");
+
+    const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:8787'
+      : 'https://hugo-newsletter-worker.ddebajyati.workers.dev';
+
+    try {
+      const response = await fetch(`${apiBase}/api/subscribe/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        msgBox.textContent = "Almost there! Please check your inbox to verify your email address.";
+        msgBox.className = "newsletter-message success";
+        document.getElementById("newsletter-form").reset();
+      } else {
+        msgBox.textContent = data.error || "An error occurred. Please try again later.";
+        msgBox.className = "newsletter-message error";
+      }
+    } catch (err) {
+      msgBox.textContent = "Unable to connect to verification server.";
+      msgBox.className = "newsletter-message error";
+    } finally {
+      btnText.classList.remove("hidden");
+      spinner.classList.add("hidden");
+      submitBtn.disabled = false;
+      msgBox.classList.remove("hidden");
+    }
+  });
+</script>

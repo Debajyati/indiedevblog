@@ -1,0 +1,18 @@
+{
+  "name": "indiedevblog",
+  "version": "1.0.0",
+  "description": "Indie Dev Blog Hugo site and Newsletter Worker",
+  "private": true,
+  "scripts": {
+    "build": "hugo --minify",
+    "deploy:hugo": "wrangler pages deploy public --project-name=indiedevblog",
+    "deploy:worker": "npm --prefix newsletter-worker run deploy",
+    "deploy": "npm run build && npm run deploy:hugo && npm run deploy:worker"
+  },
+  "devDependencies": {
+    "wrangler": "^4.105.0"
+  },
+  "dependencies": {
+    "hugo-extended": "^0.163.3"
+  }
+}

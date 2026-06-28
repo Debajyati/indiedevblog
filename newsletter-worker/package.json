@@ -1,0 +1,13 @@
+{
+  "name": "hugo-newsletter-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Hugo Newsletter automation using AutoSend",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "yes | wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.60.0"
+  }
+}

@@ -1,0 +1,9 @@
+{{- $posts := where .Site.RegularPages "Section" "posts" -}}
+{{- $latest := index $posts 0 -}}
+{
+  "title": {{ $latest.Title | jsonify }},
+  "description": {{ or $latest.Description $latest.Summary | jsonify }},
+  "image": {{ with $latest.Params.images }}{{ index . 0 | absURL | jsonify }}{{ else }}{{ with $latest.Params.og_image }}{{ . | absURL | jsonify }}{{ else }}""{{ end }}{{ end }},
+  "url": {{ $latest.Permalink | jsonify }},
+  "date": {{ $latest.Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }}
+}

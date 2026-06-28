@@ -1,0 +1,155 @@
+{{- $url := .Get 0 -}}
+
+{{/* Params */}}
+{{- $compact := .IsNamedParams | and (eq (.Get "compact") true) -}}
+{{- $noimage := .IsNamedParams | and (eq (.Get "noimage") true) -}}
+{{- $prefer := cond (.IsNamedParams) (.Get "prefer") "og" -}}
+
+{{/* API */}}
+{{- $api := printf "https://xogapi.ddebajyati.workers.dev/?url=%s" (urlquery $url) -}}
+
+{{/* Cache key */}}
+{{- $cacheKey := printf "linkcard-%x" (sha1 $url) -}}
+
+{{/* Defaults */}}
+{{- $title := $url -}}
+{{- $desc := "" -}}
+{{- $image := "" -}}
+
+{{/* Hugo-side cache */}}
+{{- $cached := site.Store.Get $cacheKey -}}
+{{- if not $cached }}
+
+  {{- $res := resources.GetRemote $api -}}
+  {{- if $res }}
+    {{- $data := $res | transform.Unmarshal -}}
+
+    {{/* Select metadata source */}}
+    {{- if eq $prefer "twitter" }}
+      {{- with $data.xTwitter }}
+        {{- with .title }}{{ $title = . }}{{ end }}
+        {{- with .description }}{{ $desc = . }}{{ end }}
+        {{- with .image }}{{ $image = . }}{{ end }}
+      {{- end }}
+    {{- else }}
+      {{- with $data.openGraph }}
+        {{- with .title }}{{ $title = . }}{{ end }}
+        {{- with .description }}{{ $desc = . }}{{ end }}
+        {{- with .image }}{{ $image = . }}{{ end }}
+      {{- else }}
+        {{- with $data.xTwitter }}
+          {{- with .title }}{{ $title = . }}{{ end }}
+          {{- with .description }}{{ $desc = . }}{{ end }}
+          {{- with .image }}{{ $image = . }}{{ end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+  {{- end }}
+
+  {{- site.Store.Set $cacheKey (dict "title" $title "desc" $desc "image" $image) -}}
+
+{{- else }}
+  {{- $title = $cached.title -}}
+  {{- $desc = $cached.desc -}}
+  {{- $image = $cached.image -}}
+{{- end }}
+
+<div class="linkcard-wrapper">
+  <div class="link-card {{ if $compact }}compact{{ end }}">
+    {{ if and $image (not $noimage) }}
+      <div class="link-card-image">
+        <img src="{{ $image }}" loading="lazy" alt="">
+      </div>
+    {{ end }}
+
+    <div class="link-card-body">
+      <div class="link-card-title">{{ $title }}</div>
+      {{ if and $desc (not $compact) }}
+        <div class="link-card-desc">{{ $desc }}</div>
+      {{ end }}
+      <a href="{{ $url }}" class="link-card-url">{{ $url }}</a>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ---------- Link Card Theme Variables ---------- */
+:root {
+  --lc-bg: var(--background);
+  --lc-title: var(--text-primary);
+  --lc-border: #e5e7eb;
+  --lc-text: #374151;
+  --lc-muted: #6b7280;
+  --lc-shadow: 0 6px 20px rgba(0,0,0,.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+  --lc-bg: var(--background);
+  --lc-title: var(--text-primary);
+    --lc-border: #1e293b;
+    --lc-text: var(--text-secondary);
+    --lc-muted: #94a3b8;
+    --lc-shadow: 0 6px 20px rgba(0,0,0,.45);
+  }
+}
+
+/* ---------- Layout ---------- */
+.linkcard-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.link-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--lc-bg);
+  border: 1px solid var(--lc-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--lc-shadow);
+}
+
+/* ---------- Image ---------- */
+.link-card-image img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Body ---------- */
+.link-card-body {
+  padding: 14px 16px;
+}
+
+.link-card-title {
+  color: var(--lc-title);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.link-card-desc {
+  color: var(--lc-text);
+  font-size: .92rem;
+  margin-bottom: 8px;
+}
+
+.link-card-url {
+  color: var(--lc-muted);
+  font-size: .8rem;
+  word-break: break-all;
+}
+
+/* ---------- Compact Mode ---------- */
+.link-card.compact .link-card-image img {
+  height: 140px;
+}
+
+.link-card.compact .link-card-desc {
+  display: none;
+}
+</style>

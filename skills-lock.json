@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "AutoSend": {
+      "source": "autosendhq/skills",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "4b09a2d9b1d31be656131cbf433f494895e0541ccb828a64793201d6bc75ffae"
+    }
+  }
+}
