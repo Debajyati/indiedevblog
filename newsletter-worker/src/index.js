@@ -251,6 +251,10 @@ async function handleSendBulk(request, env) {
     return corsResponse(JSON.stringify({ success: false, error: "Missing article title or url" }), 400);
   }
 
+  // Ensure absolute URLs for the article link and image
+  const fullUrl = url.startsWith("http") ? url : `${env.BLOG_DOMAIN.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
+  const fullImage = image ? (image.startsWith("http") ? image : `${env.BLOG_DOMAIN.replace(/\/$/, "")}/${image.replace(/^\//, "")}`) : "";
+
   // 1. Fetch all confirmed subscribers
   const { results: subscribers } = await env.DB.prepare(
     "SELECT email, name, token FROM subscribers WHERE status = 'CONFIRMED'"
@@ -282,12 +286,12 @@ async function handleSendBulk(request, env) {
 
     const htmlBody = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; color: #374151;">
-        ${image ? `<img src="${image}" alt="${title}" style="width: 100%; height: auto; display: block;" />` : ''}
+        ${fullImage ? `<img src="${fullImage}" alt="${title}" style="width: 100%; height: auto; display: block;" />` : ''}
         <div style="padding: 24px;">
           <span style="font-size: 12px; text-transform: uppercase; font-weight: bold; color: #6366f1;">New Article Published</span>
           <h1 style="font-size: 22px; color: #111827; margin-top: 8px; margin-bottom: 12px; line-height: 1.3;">${title}</h1>
           <p style="font-size: 16px; line-height: 1.5; color: #4b5563; margin-bottom: 24px;">${description || ""}</p>
-          <a href="${url}" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Read Full Article</a>
+          <a href="${fullUrl}" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Read Full Article</a>
         </div>
         <div style="background-color: #f9fafb; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af;">
           <p>Hi {{name}}, you received this because you subscribed to our newsletter.</p>
