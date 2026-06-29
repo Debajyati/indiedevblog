@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "hugo --minify",
-    "deploy:hugo": "wrangler pages deploy public --project-name=indiedevblog",
+    "deploy:hugo": "wrangler pages deploy public --project-name=indiedevblog --branch=production",
     "deploy:worker": "npm --prefix newsletter-worker run deploy",
     "deploy": "npm run build && npm run deploy:hugo && npm run deploy:worker"
   },

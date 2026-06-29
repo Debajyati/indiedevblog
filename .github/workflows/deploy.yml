@@ -40,7 +40,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           # Deploy Hugo build to Cloudflare Pages
-          npx wrangler pages deploy public --project-name=indiedevblog
+          npx wrangler pages deploy public --project-name=indiedevblog --branch=production
           # Deploy the Newsletter Worker to Cloudflare Workers
           npm run deploy:worker
 
