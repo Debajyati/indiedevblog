@@ -153,3 +153,7 @@ Follow me on Dev to motivate me so that I can bring more such tutorials like thi
 
 
 Happy coding 🧑🏽‍💻👩🏽‍💻! Have a nice day ahead! 🚀
+
+
+{{< _subscription_form >}}
+

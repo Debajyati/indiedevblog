@@ -827,3 +827,5 @@ Happy coding 🧑🏽‍💻👩🏽‍💻! Have a nice day ahead! 🚀
 
 ![Thank You](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/gtkhet64k4e1myvibnz3.jpg)
 
+{{< _subscription_form >}}
+

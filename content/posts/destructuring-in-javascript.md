@@ -282,7 +282,6 @@ When functions return objects with numerous or nested properties, destructuring 
 
     ```
 
-{{< _subscription_form >}}
 
 ## Conclusion
 Throughout the whole article, we've learnt that **'Destructuring'** is a powerful and versatile feature in JavaScript that can significantly improve your code's readability, maintainability, and efficiency. By effectively using destructuring techniques, you can write cleaner, more concise, and less error-prone code. So, embrace destructuring and take your JavaScript skills to the next level!
@@ -295,3 +294,5 @@ Feel free to connect with me :)
 |-----|------|-----|-----|-----|
 
 Happy Coding 🧑🏽‍💻👩🏽‍💻! Have a nice day ahead! 🚀
+
+{{< _subscription_form >}}
